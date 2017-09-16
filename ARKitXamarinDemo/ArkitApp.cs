@@ -106,8 +106,8 @@ namespace ARKitXamarinDemo
 			ARSession.Run(config, ARSessionRunOptions.RemoveExistingAnchors);
 		}
 
-		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		unsafe protected void ApplyTransform(Node node, OpenTK.Matrix4 matrix)
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        unsafe protected void ApplyTransform(Node node, OpenTK.Matrix4 matrix)
 		{
 			Matrix4 urhoTransform = *(Matrix4*)(void*)&matrix;
 			var rotation = urhoTransform.Rotation;
@@ -129,7 +129,7 @@ namespace ARKitXamarinDemo
 			urhoProjection.Transpose();
 
 			Camera.SetProjection(urhoProjection);
-			ApplyTransform(CameraNode, transform);
+			ApplyTransform(CameraNode, (OpenTK.Matrix4)transform);
 
 			if (!yuvTexturesInited)
 			{
@@ -226,7 +226,9 @@ namespace ARKitXamarinDemo
 
 			if (result != null && result.Distance > 0.2f)
 			{
-				var row = result.WorldTransform.Column3;
+
+				// TODO: Possibly just use result.WorldTransform.M14, result.WorldTransform.M24, etc directly
+				var row = ((OpenTK.Matrix4)result.WorldTransform).Column3;
 				return new Vector3(row.X, row.Y, -row.Z);
 			}
 			return null;
@@ -307,7 +309,7 @@ namespace ARKitXamarinDemo
 					tileMaterial = planeNode.GetComponent<StaticModel>().Material;
 				}
 
-				ApplyTransform(node, planeAnchor.Transform);
+				ApplyTransform(node, (OpenTK.Matrix4)planeAnchor.Transform);
 
 				planeNode.Scale = new Vector3(planeAnchor.Extent.X, 0.1f, planeAnchor.Extent.Z);
 				planeNode.Position = new Vector3(planeAnchor.Center.X, planeAnchor.Center.Y, -planeAnchor.Center.Z);
@@ -315,9 +317,9 @@ namespace ARKitXamarinDemo
 				//var animation = new ValueAnimation();
 				//animation.SetKeyFrame(0.0f, 0.3f);
 				//animation.SetKeyFrame(0.5f, 0.0f);
-				//tileMaterial.SetShaderParameterAnimation("MeshAlpha", animation, WrapMode.Once, 1.0f);
+				//tileMaterial.SetShaderParameterAnimation("MeshAlpha", animation, WrapMode.Once, 1.0f); 
 
-				Debug.WriteLine($"ARPlaneAnchor  Extent({planeAnchor.Extent}), Center({planeAnchor.Center}), Position({planeAnchor.Transform.Row3}");
+                Debug.WriteLine($"ARPlaneAnchor  Extent({planeAnchor.Extent}), Center({planeAnchor.Center}), Position({((OpenTK.Matrix4)planeAnchor.Transform).Row3}");
 			}
 		}
 	}

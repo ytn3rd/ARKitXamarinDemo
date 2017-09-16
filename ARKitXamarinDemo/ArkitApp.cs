@@ -107,7 +107,7 @@ namespace ARKitXamarinDemo
 		}
 
 		[MethodImpl(MethodImplOptions.AggressiveInlining)]
-		unsafe protected void ApplyTransform(Node node, OpenTK.NMatrix4 matrix)
+		unsafe protected void ApplyTransform(Node node, OpenTK.Matrix4 matrix)
 		{
 			Matrix4 urhoTransform = *(Matrix4*)(void*)&matrix;
 			var rotation = urhoTransform.Rotation;
